@@ -1684,6 +1684,7 @@ export default {
   },
 
   mounted() {
+	alert("me hamdi");
     if (this.perPage) {
       this.currentPerPage = this.perPage;
     }
