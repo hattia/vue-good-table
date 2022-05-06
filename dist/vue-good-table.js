@@ -2278,7 +2278,7 @@
 
     return _c('div', {
       staticClass: "footer__navigation__page-info"
-    }, [_vm.infoFn ? _c('div', [_vm._v("\n    " + _vm._s(_vm.infoFn(_vm.infoParams)) + "\n  ")]) : _vm.mode === 'pages' ? _c('form', {
+    }, [_vm.infoFn ? _c('div', [_vm._v("\r\n    " + _vm._s(_vm.infoFn(_vm.infoParams)) + "\r\n  ")]) : _vm.mode === 'pages' ? _c('form', {
       on: {
         "submit": function submit($event) {
           $event.preventDefault();
@@ -2317,7 +2317,7 @@
       attrs: {
         "id": "change-page-hint"
       }
-    }, [_vm._v("\n      Type a page number and press Enter to change the page.\n    ")])]) : _c('div', [_vm._v("\n    " + _vm._s(_vm.recordInfo) + "\n  ")])]);
+    }, [_vm._v("\r\n      Type a page number and press Enter to change the page.\r\n    ")])]) : _c('div', [_vm._v("\r\n    " + _vm._s(_vm.recordInfo) + "\r\n  ")])]);
   };
 
   var __vue_staticRenderFns__ = [];
@@ -2326,7 +2326,7 @@
   var __vue_inject_styles__ = undefined;
   /* scoped */
 
-  var __vue_scope_id__ = "data-v-347cbcfa";
+  var __vue_scope_id__ = "data-v-25f32d10";
   /* module identifier */
 
   var __vue_module_identifier__ = undefined;
@@ -3165,7 +3165,7 @@
           domProps: {
             "value": option
           }
-        }, [_vm._v("\n              " + _vm._s(option) + "\n            ")]);
+        }, [_vm._v("\r\n              " + _vm._s(option) + "\r\n            ")]);
       })], 2) : _vm._e(), _vm._v(" "), _vm.isDropdownObjects(column) ? _c('select', {
         staticClass: "vgt-select",
         attrs: {
@@ -3204,7 +3204,7 @@
   var __vue_inject_styles__$3 = undefined;
   /* scoped */
 
-  var __vue_scope_id__$3 = "data-v-6869bf1c";
+  var __vue_scope_id__$3 = "data-v-bab6bcb0";
   /* module identifier */
 
   var __vue_module_identifier__$3 = undefined;
@@ -3537,7 +3537,7 @@
           "aria-sort": _vm.getColumnSortLong(column),
           "aria-controls": "col-" + index
         }
-      }, [_vm._t("table-column", [_vm._v("\n        " + _vm._s(column.label) + "\n      ")], {
+      }, [_vm._t("table-column", [_vm._v("\r\n        " + _vm._s(column.label) + "\r\n      ")], {
         "column": column
       }), _vm._v(" "), _vm.isSortableColumn(column) ? _c('button', {
         on: {
@@ -3547,7 +3547,7 @@
         }
       }, [_c('span', {
         staticClass: "sr-only"
-      }, [_vm._v("\n          Sort table by " + _vm._s(column.label) + " in " + _vm._s(_vm.getColumnSortLong(column)) + " order\n          ")])]) : _vm._e()], 2) : _vm._e();
+      }, [_vm._v("\r\n          Sort table by " + _vm._s(column.label) + " in " + _vm._s(_vm.getColumnSortLong(column)) + " order\r\n          ")])]) : _vm._e()], 2) : _vm._e();
     })], 2), _vm._v(" "), _c("vgt-filter-row", {
       ref: "filter-row",
       tag: "tr",
@@ -3787,7 +3787,7 @@
       domProps: {
         "innerHTML": _vm._s(_vm.headerRow.label)
       }
-    }) : _c('span', [_vm._v("\n          " + _vm._s(_vm.headerRow.label) + "\n        ")])], {
+    }) : _c('span', [_vm._v("\r\n          " + _vm._s(_vm.headerRow.label) + "\r\n        ")])], {
       "row": _vm.headerRow
     })], 2)], 2) : _vm._e(), _vm._v(" "), _vm.headerRow.mode !== 'span' && _vm.lineNumbers ? _c('th', {
       staticClass: "vgt-row-header"
@@ -3823,7 +3823,7 @@
         "class": {
           'expand': _vm.headerRow.vgtIsExpanded
         }
-      }) : _vm._e(), _vm._v(" "), _vm._t("table-header-row", [!column.html ? _c('span', [_vm._v("\n        " + _vm._s(_vm.collectFormatted(_vm.headerRow, column, true)) + "\n      ")]) : _vm._e(), _vm._v(" "), column.html ? _c('span', {
+      }) : _vm._e(), _vm._v(" "), _vm._t("table-header-row", [!column.html ? _c('span', [_vm._v("\r\n        " + _vm._s(_vm.collectFormatted(_vm.headerRow, column, true)) + "\r\n      ")]) : _vm._e(), _vm._v(" "), column.html ? _c('span', {
         domProps: {
           "innerHTML": _vm._s(_vm.collectFormatted(_vm.headerRow, column, true))
         }
@@ -9839,6 +9839,8 @@
       }
     },
     mounted: function mounted() {
+      alert("me hamdi");
+
       if (this.perPage) {
         this.currentPerPage = this.perPage;
       }
