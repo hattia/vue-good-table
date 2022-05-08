@@ -614,9 +614,6 @@ export default {
     },
 
     isExpanded() {
-      console.log("-- isExpanded --")
-      console.log(this.expandedOptions.expandedRows)
-      console.log("----")
       return row => {
         let idGetter =
             typeof this.expandedOptions.key == 'function'

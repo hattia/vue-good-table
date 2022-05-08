@@ -8766,9 +8766,6 @@ var script$6 = {
     isExpanded: function isExpanded() {
       var _this = this;
 
-      console.log("-- isExpanded --");
-      console.log(this.expandedOptions.expandedRows);
-      console.log("----");
       return function (row) {
         var idGetter = typeof _this.expandedOptions.key == 'function' ? _this.expandedOptions.key : function (row) {
           return row[_this.expandedOptions.key];
