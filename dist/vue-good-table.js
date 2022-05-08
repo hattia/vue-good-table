@@ -8644,6 +8644,16 @@
             placeholder: 'Search Table'
           };
         }
+      },
+      expandedOptions: {
+        type: Object,
+        "default": function _default() {
+          return {
+            key: '',
+            expandedRows: [],
+            styleClass: ''
+          };
+        }
       }
     },
     data: function data() {
@@ -8756,6 +8766,28 @@
       }
     },
     computed: {
+      expandedStyleClass: function expandedStyleClass() {
+        return this.expandedOptions.styleClass || '';
+      },
+      isExpanded: function isExpanded() {
+        var _this = this;
+
+        console.log("-- isExpanded --");
+        console.log(this.expandedOptions.expandedRows);
+        console.log("----");
+        return function (row) {
+          var idGetter = typeof _this.expandedOptions.key == 'function' ? _this.expandedOptions.key : function (row) {
+            return row[_this.expandedOptions.key];
+          };
+          var id = idGetter(row);
+          return _this.expandedOptions.expandedRows.some(function (v) {
+            return v == id;
+          });
+        };
+      },
+      hasExpandedSlot: function hasExpandedSlot() {
+        return !!this.$scopedSlots['expanded-row'];
+      },
       tableStyles: function tableStyles() {
         if (this.compactMode) return this.tableStyleClasses + 'vgt-compact';else return this.tableStyleClasses;
       },
@@ -8900,7 +8932,7 @@
       // or sort type changes
       //----------------------------------------
       processedRows: function processedRows() {
-        var _this = this;
+        var _this2 = this;
 
         // we only process rows when mode is local
         var computedRows = this.filteredRows;
@@ -8919,15 +8951,15 @@
           });
           var filteredRows = [];
           allRows.forEach(function (row) {
-            for (var i = 0; i < _this.columns.length; i += 1) {
-              var col = _this.columns[i]; // if col does not have search disabled,
+            for (var i = 0; i < _this2.columns.length; i += 1) {
+              var col = _this2.columns[i]; // if col does not have search disabled,
 
               if (!col.globalSearchDisabled) {
                 // if a search function is provided,
                 // use that for searching, otherwise,
                 // use the default search behavior
-                if (_this.searchFn) {
-                  var foundMatch = _this.searchFn(row, col, _this.collectFormatted(row, col), _this.searchTerm);
+                if (_this2.searchFn) {
+                  var foundMatch = _this2.searchFn(row, col, _this2.collectFormatted(row, col), _this2.searchTerm);
 
                   if (foundMatch) {
                     filteredRows.push(row);
@@ -8935,7 +8967,7 @@
                   }
                 } else {
                   // comparison
-                  var matched = defaultType.filterPredicate(_this.collectFormatted(row, col), _this.searchTerm, _this.searchSkipDiacritics);
+                  var matched = defaultType.filterPredicate(_this2.collectFormatted(row, col), _this2.searchTerm, _this2.searchSkipDiacritics);
 
                   if (matched) {
                     filteredRows.push(row);
@@ -8974,18 +9006,18 @@
               //* we need to get column for each sort
               var sortValue;
 
-              for (var i = 0; i < _this.sorts.length; i += 1) {
-                var srt = _this.sorts[i];
+              for (var i = 0; i < _this2.sorts.length; i += 1) {
+                var srt = _this2.sorts[i];
 
                 if (srt.type === SORT_TYPES.None) {
                   //* if no sort, we need to use the original index to sort.
                   sortValue = sortValue || xRow.originalIndex - yRow.originalIndex;
                 } else {
-                  var column = _this.getColumnForField(srt.field);
+                  var column = _this2.getColumnForField(srt.field);
 
-                  var xvalue = _this.collect(xRow, srt.field);
+                  var xvalue = _this2.collect(xRow, srt.field);
 
-                  var yvalue = _this.collect(yRow, srt.field); //* if a custom sort function has been provided we use that
+                  var yvalue = _this2.collect(yRow, srt.field); //* if a custom sort function has been provided we use that
 
 
                   var sortFn = column.sortFn;
@@ -9013,7 +9045,7 @@
         return computedRows;
       },
       paginated: function paginated() {
-        var _this2 = this;
+        var _this3 = this;
 
         if (!this.processedRows.length) return [];
 
@@ -9027,7 +9059,7 @@
           var _paginatedRows;
 
           //* only add headers when group options are enabled.
-          if (_this2.groupOptions.enabled) {
+          if (_this3.groupOptions.enabled) {
             paginatedRows.push(childRows);
           }
 
@@ -9059,7 +9091,7 @@
         paginatedRows.forEach(function (flatRow) {
           //* header row?
           if (flatRow.vgt_header_id !== undefined) {
-            _this2.handleExpanded(flatRow);
+            _this3.handleExpanded(flatRow);
 
             var newHeaderRow = JSON.parse(JSON.stringify(flatRow));
             newHeaderRow.children = [];
@@ -9071,7 +9103,7 @@
             });
 
             if (!hRow) {
-              hRow = _this2.processedRows.find(function (r) {
+              hRow = _this3.processedRows.find(function (r) {
                 return r.vgt_header_id === flatRow.vgt_id;
               });
 
@@ -9135,10 +9167,10 @@
         }
       },
       toggleExpand: function toggleExpand(id) {
-        var _this3 = this;
+        var _this4 = this;
 
         var headerRow = this.filteredRows.find(function (r) {
-          return r[_this3.rowKeyField] === id;
+          return r[_this4.rowKeyField] === id;
         });
 
         if (headerRow) {
@@ -9152,23 +9184,23 @@
         }
       },
       expandAll: function expandAll() {
-        var _this4 = this;
+        var _this5 = this;
 
         this.filteredRows.forEach(function (row) {
-          _this4.$set(row, 'vgtIsExpanded', true);
+          _this5.$set(row, 'vgtIsExpanded', true);
 
-          if (_this4.maintainExpanded) {
-            _this4.expandedRowKeys.add(row[_this4.rowKeyField]);
+          if (_this5.maintainExpanded) {
+            _this5.expandedRowKeys.add(row[_this5.rowKeyField]);
           }
         });
       },
       collapseAll: function collapseAll() {
-        var _this5 = this;
+        var _this6 = this;
 
         this.filteredRows.forEach(function (row) {
-          _this5.$set(row, 'vgtIsExpanded', false);
+          _this6.$set(row, 'vgtIsExpanded', false);
 
-          _this5.expandedRowKeys.clear();
+          _this6.expandedRowKeys.clear();
         });
       },
       getColumnForField: function getColumnForField(field) {
@@ -9201,18 +9233,18 @@
         });
       },
       unselectAllInternal: function unselectAllInternal(forceAll) {
-        var _this6 = this;
+        var _this7 = this;
 
         var rows = this.selectAllByPage && !forceAll ? this.paginated : this.filteredRows;
         rows.forEach(function (headerRow, i) {
           headerRow.children.forEach(function (row, j) {
-            _this6.$set(row, 'vgtSelected', false);
+            _this7.$set(row, 'vgtSelected', false);
           });
         });
         this.emitSelectedRows();
       },
       toggleSelectAll: function toggleSelectAll() {
-        var _this7 = this;
+        var _this8 = this;
 
         if (this.allSelected) {
           this.unselectAllInternal();
@@ -9222,16 +9254,16 @@
         var rows = this.selectAllByPage ? this.paginated : this.filteredRows;
         rows.forEach(function (headerRow) {
           headerRow.children.forEach(function (row) {
-            _this7.$set(row, 'vgtSelected', true);
+            _this8.$set(row, 'vgtSelected', true);
           });
         });
         this.emitSelectedRows();
       },
       toggleSelectGroup: function toggleSelectGroup(event, headerRow) {
-        var _this8 = this;
+        var _this9 = this;
 
         headerRow.children.forEach(function (row) {
-          _this8.$set(row, 'vgtSelected', event.checked);
+          _this9.$set(row, 'vgtSelected', event.checked);
         });
       },
       changePage: function changePage(value) {
@@ -9482,7 +9514,7 @@
       },
       // method to filter rows
       filterRows: function filterRows(columnFilters) {
-        var _this9 = this;
+        var _this10 = this;
 
         var fromFilter = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
         // if (!this.rows.length) return;
@@ -9499,26 +9531,26 @@
             // to 1
             // if the mode is remote, we only need to reset, if this is
             // being called from filter, not when rows are changing
-            if (_this9.mode !== 'remote' || fromFilter) {
-              _this9.changePage(1);
+            if (_this10.mode !== 'remote' || fromFilter) {
+              _this10.changePage(1);
             } // we need to emit an event and that's that.
             // but this only needs to be invoked if filter is changing
             // not when row object is modified.
 
 
             if (fromFilter) {
-              _this9.$emit('on-column-filter', {
-                columnFilters: _this9.columnFilters
+              _this10.$emit('on-column-filter', {
+                columnFilters: _this10.columnFilters
               });
             } // if mode is remote, we don't do any filtering here.
 
 
-            if (_this9.mode === 'remote') {
+            if (_this10.mode === 'remote') {
               if (fromFilter) {
-                _this9.$emit('update:isLoading', true);
+                _this10.$emit('update:isLoading', true);
               } else {
                 // if remote filtering has already been taken care of.
-                _this9.filteredRows = computedRows;
+                _this10.filteredRows = computedRows;
               }
 
               return {
@@ -9535,20 +9567,20 @@
             };
 
             var _loop = function _loop(i) {
-              var col = _this9.typedColumns[i];
+              var col = _this10.typedColumns[i];
 
-              if (_this9.columnFilters[fieldKey(col.field)]) {
+              if (_this10.columnFilters[fieldKey(col.field)]) {
                 instancesOfFiltering = true;
                 computedRows.forEach(function (headerRow) {
                   var newChildren = headerRow.children.filter(function (row) {
                     // If column has a custom filter, use that.
                     if (col.filterOptions && typeof col.filterOptions.filterFn === 'function') {
-                      return col.filterOptions.filterFn(_this9.collect(row, col.field), _this9.columnFilters[fieldKey(col.field)]);
+                      return col.filterOptions.filterFn(_this10.collect(row, col.field), _this10.columnFilters[fieldKey(col.field)]);
                     } // Otherwise Use default filters
 
 
                     var typeDef = col.typeDef;
-                    return typeDef.filterPredicate(_this9.collect(row, col.field), _this9.columnFilters[fieldKey(col.field)], false, col.filterOptions && _typeof(col.filterOptions.filterDropdownItems) === 'object');
+                    return typeDef.filterPredicate(_this10.collect(row, col.field), _this10.columnFilters[fieldKey(col.field)], false, col.filterOptions && _typeof(col.filterOptions.filterDropdownItems) === 'object');
                   }); // should we remove the header?
 
                   headerRow.children = newChildren;
@@ -9556,7 +9588,7 @@
               }
             };
 
-            for (var i = 0; i < _this9.typedColumns.length; i++) {
+            for (var i = 0; i < _this10.typedColumns.length; i++) {
               _loop(i);
             }
           }();
@@ -9616,13 +9648,13 @@
         return classes;
       },
       handleGrouped: function handleGrouped(originalRows) {
-        var _this10 = this;
+        var _this11 = this;
 
         originalRows.forEach(function (headerRow, i) {
           headerRow.vgt_header_id = i;
 
-          if (_this10.groupOptions.maintainExpanded && _this10.expandedRowKeys.has(headerRow[_this10.groupOptions.rowKey])) {
-            _this10.$set(headerRow, 'vgtIsExpanded', true);
+          if (_this11.groupOptions.maintainExpanded && _this11.expandedRowKeys.has(headerRow[_this11.groupOptions.rowKey])) {
+            _this11.$set(headerRow, 'vgtIsExpanded', true);
           }
 
           headerRow.children.forEach(function (childRow) {
@@ -9632,7 +9664,7 @@
         return originalRows;
       },
       initializePagination: function initializePagination() {
-        var _this11 = this;
+        var _this12 = this;
 
         var _this$paginationOptio = this.paginationOptions,
             enabled = _this$paginationOptio.enabled,
@@ -9726,7 +9758,7 @@
 
         if (typeof setCurrentPage === 'number') {
           setTimeout(function () {
-            _this11.changePage(setCurrentPage);
+            _this12.changePage(setCurrentPage);
           }, 500);
         }
 
@@ -9839,8 +9871,6 @@
       }
     },
     mounted: function mounted() {
-      alert("me hamdi");
-
       if (this.perPage) {
         this.currentPerPage = this.perPage;
       }
@@ -10084,7 +10114,7 @@
           }
         }], null, true)
       }) : _vm._e(), _vm._v(" "), _vm._l(headerRow.children, function (row, index) {
-        return (_vm.groupOptions.collapsable ? headerRow.vgtIsExpanded : true) ? _c('tr', {
+        return [(_vm.groupOptions.collapsable ? headerRow.vgtIsExpanded : true) ? _c('tr', {
           key: row.originalIndex,
           "class": _vm.getRowStyleClass(row),
           on: {
@@ -10144,7 +10174,18 @@
             "formattedRow": _vm.formattedRow(row),
             "index": index
           })], 2) : _vm._e();
-        })], 2) : _vm._e();
+        })], 2) : _vm._e(), _vm._v(" "), _vm.hasExpandedSlot && _vm.isExpanded(row) ? _c('tr', {
+          key: row.originalIndex + '-expanded',
+          "class": _vm.expandedStyleClass
+        }, [_c('td', {
+          attrs: {
+            "colspan": _vm.fullColspan
+          }
+        }, [_vm._t("expanded-row", null, {
+          "row": row,
+          "formattedRow": _vm.formattedRow(row),
+          "index": index
+        })], 2)]) : _vm._e()];
       }), _vm._v(" "), _vm.groupHeaderOnBottom ? _c('vgt-header-row', {
         attrs: {
           "header-row": headerRow,
