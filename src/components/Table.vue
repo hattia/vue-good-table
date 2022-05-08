@@ -215,9 +215,9 @@
               </template>
             </vgt-header-row>
             <!-- normal rows here. we loop over all rows -->
+            <template v-for="(row, index) in headerRow.children">
             <tr
               v-if="groupOptions.collapsable ? headerRow.vgtIsExpanded : true"
-              v-for="(row, index) in headerRow.children"
               :key="row.originalIndex"
               :class="getRowStyleClass(row)"
               @mouseenter="onMouseenter(row, index)"
@@ -265,6 +265,25 @@
                 </slot>
               </td>
             </tr>
+
+            <!-- expanded row -->
+            <tr
+                :class="expandedStyleClass"
+                :key="row.originalIndex + '-expanded'"
+                v-if="hasExpandedSlot && isExpanded(row)"
+            >
+              <td :colspan="fullColspan">
+                <slot
+                    name="expanded-row"
+                    :row="row"
+                    :formattedRow="formattedRow(row)"
+                    :index="index"
+                ></slot>
+              </td>
+            </tr>
+            </template>
+
+
             <!-- if group row header is at the bottom -->
             <vgt-header-row
               v-if="groupHeaderOnBottom"
@@ -450,6 +469,19 @@ export default {
         };
       },
     },
+
+    expandedOptions: {
+      type: Object,
+      default() {
+        return {
+          key: '',
+          expandedRows: [],
+          styleClass: ''
+        }
+      }
+    }
+
+
   },
 
   data: () => ({
@@ -576,6 +608,29 @@ export default {
   },
 
   computed: {
+
+    expandedStyleClass() {
+      return this.expandedOptions.styleClass || ''
+    },
+
+    isExpanded() {
+      console.log("-- isExpanded --")
+      console.log(this.expandedOptions.expandedRows)
+      console.log("----")
+      return row => {
+        let idGetter =
+            typeof this.expandedOptions.key == 'function'
+                ? this.expandedOptions.key
+                : row => row[this.expandedOptions.key]
+        let id = idGetter(row)
+        return this.expandedOptions.expandedRows.some(v => v == id)
+      }
+    },
+
+    hasExpandedSlot() {
+      return !!this.$scopedSlots['expanded-row']
+    },
+
     tableStyles() {
       if (this.compactMode)
         return this.tableStyleClasses + 'vgt-compact'
@@ -1684,7 +1739,6 @@ export default {
   },
 
   mounted() {
-	alert("me hamdi");
     if (this.perPage) {
       this.currentPerPage = this.perPage;
     }
